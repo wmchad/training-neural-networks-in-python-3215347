@@ -87,25 +87,33 @@ class MultiLayerPerceptron:
         # Challenge: Write the Backpropagation Algorithm. 
         # Here you have it step by step:
 
-        # STEP 1: Feed a sample to the network 
+        # STEP 1: Feed a sample to the network
+        yhat = self.run(x) 
         
         # STEP 2: Calculate the MSE
+        errors = y - yhat
+        MSE = np.mean(np.pow(errors, 2))
 
         # STEP 3: Calculate the output error terms
+        self.d[-1] = yhat * (1 - yhat) * errors
 
         # STEP 4: Calculate the error term of each unit on each layer
-        for i in reversed(range(1,len(self.network)-1)):
+        for i in reversed(range(1, len(self.network)-1)):
             for h in range(len(self.network[i])):
                 fwd_error = 0.0
-                for k in range(self.layers[i+1]): 
-                    fwd_error += # fill in the blank               
-                self.d[i][h] = # fill in the blank
+                for k in range(self.layers[i + 1]): 
+                    fwd_error += self.network[i + 1][k].weights[h] * self.d[i + 1][k]
+                self.d[i][h] = self.values[i][h] * (1 - self.values[i][h]) * fwd_error
 
         # STEPS 5 & 6: Calculate the deltas and update the weights
         for i in range(1,len(self.network)):
             for j in range(self.layers[i]):
-                for k in range(self.layers[i-1]+1):
-                    pass# fill in the blank
+                for k in range(self.layers[i - 1]+1):
+                    if k == self.layers[i - 1]:
+                        delta = self.eta * self.d[i][j] * self.bias
+                    else:
+                        delta = self.eta * self.d[i][j] * self.values[i - 1][k]
+                    self.network[i][j].weights[k] += delta
         return MSE
 
 
